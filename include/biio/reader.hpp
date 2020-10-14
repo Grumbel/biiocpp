@@ -88,6 +88,8 @@ public:
     return bit_cast<T>(buffer);
   }
 
+  std::string read_string(size_t len);
+
 private:
   std::istream& m_stream;
   std::unique_ptr<std::istream> m_stream_owner;

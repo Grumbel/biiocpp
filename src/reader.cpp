@@ -52,6 +52,16 @@ Reader::Reader(std::istream& stream) :
 {
 }
 
+std::string
+Reader::read_string(size_t len)
+{
+  std::string value(len, ' ');
+  if (!m_stream.read(value.data(), len)) {
+    throw std::runtime_error("biio::read_string() failed");
+  }
+  return value;
+}
+
 } // namespace biio
 
 /* EOF */

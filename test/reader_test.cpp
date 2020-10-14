@@ -64,4 +64,13 @@ TEST(ReaderTest, read_be_fail)
   EXPECT_ANY_THROW((binreader.read_be<uint32_t>()));
 }
 
+TEST(ReaderTest, read_string)
+{
+  std::istringstream stream("Hello World");
+  auto binreader = Reader::from_stream(stream);
+  EXPECT_EQ("Hello", binreader.read_string(5));
+  EXPECT_EQ(" ", binreader.read_string(1));
+  EXPECT_EQ("World", binreader.read_string(5));
+}
+
 /* EOF */
