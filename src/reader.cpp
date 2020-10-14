@@ -17,6 +17,8 @@
 #include "reader.hpp"
 
 #include <fstream>
+#include <sstream>
+#include <string.h>
 
 namespace biio {
 
@@ -24,6 +26,11 @@ Reader
 Reader::from_file(std::filesystem::path const& filename)
 {
   std::ifstream stream(filename, std::ios::binary);
+  if (!stream) {
+    std::ostringstream oss;
+    oss << filename << ": failed to open: " << strerror(errno);
+    throw std::runtime_error(oss.str());
+  }
 
   return Reader(std::make_unique<std::ifstream>(std::move(stream)));
 }
@@ -58,6 +65,17 @@ Reader::read_string(size_t len)
   std::string value(len, ' ');
   if (!m_stream.read(value.data(), len)) {
     throw std::runtime_error("biio::read_string() failed");
+  }
+  return value;
+}
+
+std::string
+Reader::read_string0(size_t maxlen)
+{
+  std::string value = read_string(maxlen);
+  std::string::size_type p = value.find('\0');
+  if (p != std::string::npos) {
+    value.resize(p);
   }
   return value;
 }

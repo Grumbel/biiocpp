@@ -73,4 +73,12 @@ TEST(ReaderTest, read_string)
   EXPECT_EQ("World", binreader.read_string(5));
 }
 
+TEST(ReaderTest, read_string0)
+{
+  std::istringstream stream(std::string("Hello\0\0\0World\0\0\0", 16));
+  auto binreader = Reader::from_stream(stream);
+  EXPECT_EQ("Hello", binreader.read_string0(8));
+  EXPECT_EQ("World", binreader.read_string0(8));
+}
+
 /* EOF */

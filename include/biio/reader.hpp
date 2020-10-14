@@ -89,6 +89,7 @@ public:
   }
 
   std::string read_string(size_t len);
+  std::string read_string0(size_t maxlen);
 
 private:
   std::istream& m_stream;
