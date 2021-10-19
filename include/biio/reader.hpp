@@ -44,7 +44,7 @@ public:
     static_assert(!std::is_arithmetic_v<T>,
                   "explicit endianess request required for integer and floating point");
 
-    std::array<char, sizeof(T)> buffer;
+    std::array<char, sizeof(T)> buffer = {};
     if (!m_stream.read(buffer.data(), buffer.size())) {
       throw std::runtime_error("biio::read() failed");
     }
@@ -58,7 +58,7 @@ public:
     static_assert(std::is_arithmetic_v<T>,
                   "type must be integer or floating point");
 
-    std::array<char, sizeof(T)> buffer;
+    std::array<char, sizeof(T)> buffer = {};
     if (!m_stream.read(buffer.data(), buffer.size())) {
       throw std::runtime_error("biio::read_le() failed");
     }
@@ -76,7 +76,7 @@ public:
     static_assert(std::is_arithmetic_v<T>,
                   "type must be integer or floating point");
 
-    std::array<char, sizeof(T)> buffer;
+    std::array<char, sizeof(T)> buffer = {};
     if (!m_stream.read(buffer.data(), buffer.size())) {
       throw std::runtime_error("biio::read_be() failed");
     }
