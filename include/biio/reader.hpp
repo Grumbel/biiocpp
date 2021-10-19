@@ -17,12 +17,11 @@
 #ifndef HEADER_BIIO_READER_HPP
 #define HEADER_BIIO_READER_HPP
 
+#include <bit>
 #include <filesystem>
 #include <istream>
 #include <memory>
 #include <stdint.h>
-
-#include "bit_cast.hpp"
 
 namespace biio {
 
@@ -49,7 +48,8 @@ public:
     if (!m_stream.read(buffer.data(), buffer.size())) {
       throw std::runtime_error("biio::read() failed");
     }
-    return bit_cast<T>(buffer);
+
+    return std::bit_cast<T>(buffer);
   }
 
   /** Read a value in little-endian order and convert it to native */
@@ -67,7 +67,7 @@ public:
       std::reverse(buffer.begin(), buffer.end());
     }
 
-    return bit_cast<T>(buffer);
+    return std::bit_cast<T>(buffer);
   }
 
   /** Read a value in big-endian order and convert it to native */
@@ -85,7 +85,7 @@ public:
       std::reverse(buffer.begin(), buffer.end());
     }
 
-    return bit_cast<T>(buffer);
+    return std::bit_cast<T>(buffer);
   }
 
   std::string read_string(size_t len);
