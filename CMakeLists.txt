@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 3.6)
-project(biio)
+project(biio VERSION 0.1.0)
 
 set(TINYCMMC_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/external/cmake-modules/modules/")
 find_package(tinycmmc CONFIG)
@@ -28,21 +28,22 @@ include(GNUInstallDirs)
 include(MaximumWarnings)
 include(ClangTidy)
 
-file(GLOB BIIO_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  include/prio/*.hpp)
+file(GLOB BIIO_HEADER_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  include/biio/*.hpp)
 file(GLOB BIIO_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   src/*.cpp)
 
 add_library(biio STATIC ${BIIO_SOURCES})
+set_target_properties(biio PROPERTIES PUBLIC_HEADER "${BIIO_HEADER_SOURCES}")
 set_target_properties(biio PROPERTIES
   CXX_STANDARD 20
   CXX_STANDARD_REQUIRED ON
   CXX_EXTENSIONS OFF)
 target_compile_options(biio PRIVATE ${WARNINGS_CXX_FLAGS})
-target_include_directories(biio INTERFACE include/)
+target_include_directories(biio INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
 target_include_directories(biio PRIVATE src/ include/biio/)
-set_target_properties(biio PROPERTIES PUBLIC_HEADER "${BIIO_HEADERS}")
-# target_link_libraries(biio PUBLIC PkgConfig::JSONCPP)
 
 if(BUILD_TESTS)
   if(NOT TARGET GTest)
@@ -68,7 +69,28 @@ if(BUILD_TESTS)
     COMMAND test_biio)
 endif()
 
-install(TARGETS biio
+install(TARGETS "${PROJECT_NAME}"
+  EXPORT "${PROJECT_NAME}"
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file("${PROJECT_NAME}-config.cmake.in" "${PROJECT_NAME}-config.cmake"
+  INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}")
+write_basic_package_version_file("${PROJECT_NAME}-config-version.cmake"
+  VERSION "${PROJECT_VERSION}"
+  COMPATIBILITY SameMinorVersion)
+export(EXPORT "${PROJECT_NAME}"
+  NAMESPACE "${PROJECT_NAME}::"
+  FILE "${PROJECT_NAME}-targets.cmake")
+install(EXPORT "${PROJECT_NAME}"
+  FILE "${PROJECT_NAME}-targets.cmake"
+  NAMESPACE "${PROJECT_NAME}::"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 
 # EOF #
