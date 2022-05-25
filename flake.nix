@@ -25,6 +25,8 @@
             ];
             buildInputs = [
               tinycmmc.defaultPackage.${system}
+
+              pkgs.gtest
             ];
            };
         };
