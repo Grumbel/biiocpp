@@ -17,10 +17,11 @@
 #ifndef HEADER_BIIO_READER_HPP
 #define HEADER_BIIO_READER_HPP
 
+#include <array>
+#include <algorithm>
 #include <filesystem>
 #include <istream>
 #include <memory>
-#include <stdint.h>
 
 #include "bit_cast.hpp"
 
